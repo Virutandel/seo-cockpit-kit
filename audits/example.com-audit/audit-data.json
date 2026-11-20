@@ -1,0 +1,210 @@
+{
+ "meta": {
+  "site": "https://example.com",
+  "domain": "example.com",
+  "generated_at": "2026-11-20T02:28:07.730785+00:00",
+  "tool": "claude-seo 2.5.0 via SEO Cockpit aggregate.py",
+  "sources": {
+   "Content Quality": "findings/content.md",
+   "Performance (CWV)": "findings/performance.md",
+   "Schema / Structured Data": "findings/performance.md",
+   "AI Search Readiness": "findings/performance.md",
+   "Images": "findings/performance.md",
+   "Technical SEO": "findings/technical.md",
+   "On-Page SEO": "findings/technical.md"
+  }
+ },
+ "summary": {
+  "health_score": 73,
+  "business_type": "SaaS",
+  "top_findings": [
+   "Demo: hero image is 1.8 MB (Performance (CWV))",
+   "Demo: 404 page returns status 200 (Technical SEO)",
+   "Demo: thin category pages (Content Quality)"
+  ],
+  "quick_wins": [
+   "Demo: two redirect hops on the www host (Technical SEO)",
+   "Demo: no dates on guides (Content Quality)",
+   "Demo: answers are buried below long intros (AI Search Readiness)",
+   "Demo: 6 titles longer than 60 characters (On-Page SEO)",
+   "Demo: Article schema missing dateModified (Schema / Structured Data)"
+  ],
+  "counts": {
+   "Critical": 1,
+   "High": 2,
+   "Medium": 3,
+   "Low": 3,
+   "Info": 0
+  }
+ },
+ "categories": [
+  {
+   "name": "Technical SEO",
+   "score": 82,
+   "weight": 22,
+   "what_works": [
+    "Demo: all sitemap URLs return 200",
+    "Demo: HTTPS with a single canonical host"
+   ],
+   "findings": [
+    {
+     "title": "Demo: two redirect hops on the www host",
+     "severity": "Medium",
+     "description": "Fictional example. http://www.example.com goes through two redirects before the final page.",
+     "recommendation": "Send every variant to the final HTTPS URL in one hop."
+    },
+    {
+     "title": "Demo: 404 page returns status 200",
+     "severity": "High",
+     "description": "Fictional example. A made-up URL answers 200 with the not-found template.",
+     "recommendation": "Return a real 404 status for unknown URLs."
+    }
+   ]
+  },
+  {
+   "name": "On-Page SEO",
+   "score": 74,
+   "weight": 20,
+   "what_works": [
+    "Demo: every page has one H1"
+   ],
+   "findings": [
+    {
+     "title": "Demo: 6 titles longer than 60 characters",
+     "severity": "Low",
+     "description": "Fictional example. Long titles are cut off in results.",
+     "recommendation": "Shorten them and lead with the main phrase."
+    }
+   ]
+  },
+  {
+   "name": "Content Quality",
+   "score": 68,
+   "weight": 23,
+   "what_works": [
+    "Demo: named author with a bio page"
+   ],
+   "findings": [
+    {
+     "title": "Demo: thin category pages",
+     "severity": "High",
+     "description": "Fictional example. Four category pages have under 120 words of their own text.",
+     "recommendation": "Add an introduction that answers what the category is and who it is for."
+    },
+    {
+     "title": "Demo: no dates on guides",
+     "severity": "Medium",
+     "description": "Fictional example. Guides show no published or updated date.",
+     "recommendation": "Show both dates and keep them in the schema."
+    }
+   ]
+  },
+  {
+   "name": "Schema / Structured Data",
+   "score": 80,
+   "weight": 10,
+   "what_works": [
+    "Demo: Organization and WebSite schema present"
+   ],
+   "findings": [
+    {
+     "title": "Demo: Article schema missing dateModified",
+     "severity": "Low",
+     "description": "Fictional example.",
+     "recommendation": "Add dateModified next to datePublished."
+    }
+   ]
+  },
+  {
+   "name": "Performance (CWV)",
+   "score": 61,
+   "weight": 10,
+   "what_works": [
+    "Demo: CLS is 0 on the home page"
+   ],
+   "findings": [
+    {
+     "title": "Demo: hero image is 1.8 MB",
+     "severity": "Critical",
+     "description": "Fictional example. The largest element on mobile takes 4.9 s to paint.",
+     "recommendation": "Serve a resized WebP hero and preload it."
+    }
+   ]
+  },
+  {
+   "name": "Images",
+   "score": 77,
+   "weight": 5,
+   "what_works": [
+    "Demo: every image has width and height"
+   ],
+   "findings": [
+    {
+     "title": "Demo: 14 images with empty alt text",
+     "severity": "Low",
+     "description": "Fictional example.",
+     "recommendation": "Describe what each content image shows."
+    }
+   ]
+  },
+  {
+   "name": "AI Search Readiness",
+   "score": 70,
+   "weight": 10,
+   "what_works": [
+    "Demo: AI crawlers are allowed in robots.txt"
+   ],
+   "findings": [
+    {
+     "title": "Demo: answers are buried below long intros",
+     "severity": "Medium",
+     "description": "Fictional example. The direct answer sits 400 words into most guides.",
+     "recommendation": "Put a 40 to 60 word answer under each question heading."
+    }
+   ]
+  }
+ ],
+ "action_plan": {
+  "phases": [
+   {
+    "name": "Phase 1: Critical Fixes",
+    "timeframe": "Week 1",
+    "items": [
+     "Demo: hero image is 1.8 MB: Serve a resized WebP hero and preload it."
+    ]
+   },
+   {
+    "name": "Phase 2: High-Impact Improvements",
+    "timeframe": "Weeks 2-3",
+    "items": [
+     "Demo: 404 page returns status 200: Return a real 404 status for unknown URLs.",
+     "Demo: thin category pages: Add an introduction that answers what the category is and who it is for."
+    ]
+   },
+   {
+    "name": "Phase 3: Content & Authority",
+    "timeframe": "Month 2",
+    "items": [
+     "Demo: two redirect hops on the www host: Send every variant to the final HTTPS URL in one hop.",
+     "Demo: no dates on guides: Show both dates and keep them in the schema.",
+     "Demo: answers are buried below long intros: Put a 40 to 60 word answer under each question heading."
+    ]
+   },
+   {
+    "name": "Phase 4: Monitoring & Iteration",
+    "timeframe": "Ongoing",
+    "items": [
+     "Demo: 6 titles longer than 60 characters: Shorten them and lead with the main phrase.",
+     "Demo: Article schema missing dateModified: Add dateModified next to datePublished.",
+     "Demo: 14 images with empty alt text: Describe what each content image shows.",
+     "Re-run /seo audit monthly and compare scores in the SEO Cockpit",
+     "Request indexing for new posts and watch Search Console coverage"
+    ]
+   }
+  ]
+ },
+ "artifacts": {
+  "findings_dir": "findings/",
+  "screenshots_dir": "screenshots/"
+ }
+}

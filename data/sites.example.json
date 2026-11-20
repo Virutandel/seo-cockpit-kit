@@ -1,0 +1,12 @@
+{
+  "audits_dir": "./audits",
+  "google_api_key": "",
+  "sites": [
+    {
+      "url": "https://example.com",
+      "label": "Example (demo data)",
+      "gsc": "",
+      "vitals": false
+    }
+  ]
+}

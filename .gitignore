@@ -1,0 +1,9 @@
+# Generated dashboard data and your own settings stay on your computer
+data/*/
+data/index.json
+data/sites.json
+# Your audits (client data) stay on your computer. Only the fictional demo ships with the repo.
+audits/*
+!audits/example.com-audit/
+__pycache__/
+.DS_Store

@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEO Cockpit</title>
+<meta name="description" content="Local dashboard over claude-seo audits: the specialist crew standing on the parts of your site they check, with scores, findings and the action plan.">
+<link rel="stylesheet" href="assets/fonts.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 22%27%3E%3Crect x=%272%27 y=%271%27 width=%2712%27 height=%2711%27 fill=%27%23ffd84a%27/%3E%3Crect x=%274%27 y=%274%27 width=%273%27 height=%273%27 fill=%27%231a1c2c%27/%3E%3Crect x=%279%27 y=%274%27 width=%273%27 height=%273%27 fill=%27%231a1c2c%27/%3E%3Crect x=%273%27 y=%2712%27 width=%2710%27 height=%276%27 fill=%27%23f79a1e%27/%3E%3Crect x=%273%27 y=%2718%27 width=%273%27 height=%273%27 fill=%27%23f79a1e%27/%3E%3Crect x=%2710%27 y=%2718%27 width=%273%27 height=%273%27 fill=%27%23f79a1e%27/%3E%3C/svg%3E">
+<style>
+:root{color-scheme:light dark;
+  --green-ink:#5fd38d;--coral-ink:#D97757;--link:#ffd84a;
+  --bg:#13141f;--bg2:#1a1c2c;--panel:#232640;--panel2:#2a3060;--line:#3b4178;--ink:#ffffff;--sub:#d6d8ea;--dim:#aab0d6;
+  --yellow:#ffd84a;--green:#5fd38d;--orange:#f79a1e;--red:#ef6b6b;--blue:#7fb2ff;--violet:#b48cff;--teal:#3ad6c8;--coral:#D97757;
+  --disp:'Silkscreen','Pixelify Sans',monospace;--head:'Silkscreen','Pixelify Sans',monospace;--body:'Pixelify Sans',ui-monospace,Menlo,monospace;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--green-ink:#1f7a45;--coral-ink:#a8441f;--link:#7a4e00;--bg:#fff7d1;--bg2:#fff1b8;--panel:#ffffff;--panel2:#fff0b0;--line:#1a1c2c;--ink:#1a1c2c;--sub:#34375a;--dim:#565a7e;--blue:#2a3060;--violet:#6a3fb5;--teal:#0e8a80}}
+:root[data-theme="light"]{--green-ink:#1f7a45;--coral-ink:#a8441f;--link:#7a4e00;--bg:#fff7d1;--bg2:#fff1b8;--panel:#ffffff;--panel2:#fff0b0;--line:#1a1c2c;--ink:#1a1c2c;--sub:#34375a;--dim:#565a7e;--blue:#2a3060;--violet:#6a3fb5;--teal:#0e8a80}
+:root[data-theme="dark"]{--green-ink:#5fd38d;--coral-ink:#D97757;--link:#ffd84a;--bg:#13141f;--bg2:#1a1c2c;--panel:#232640;--panel2:#2a3060;--line:#3b4178;--ink:#ffffff;--sub:#d6d8ea;--dim:#aab0d6;--blue:#7fb2ff;--violet:#b48cff;--teal:#3ad6c8}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 var(--body);-webkit-font-smoothing:none}
+a{color:var(--link)}
+button,select{font:inherit;color:inherit}
+.top{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:3px solid var(--line);background:var(--bg);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.brand{font:18px var(--head);letter-spacing:.02em;text-transform:uppercase}.brand b{color:var(--yellow)}
+.top select{background:var(--panel);border:3px solid var(--line);padding:6px 10px;border-radius:0;min-width:220px}
+.btn{background:var(--yellow);color:#1a1c2c;border:3px solid #1a1c2c;padding:6px 12px;cursor:pointer;font:12px var(--disp);text-transform:uppercase;letter-spacing:.04em;box-shadow:3px 3px 0 #1a1c2c;border-radius:0}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #1a1c2c}
+.btn.ghost{background:var(--panel);color:var(--ink);border-color:var(--line);box-shadow:3px 3px 0 var(--line)}
+.stamp{margin-left:auto;font:11px var(--mono);color:var(--dim)}
+main{max-width:1280px;margin:0 auto;padding:18px 16px 60px}
+h1{font:22px var(--head);margin:0 0 4px;text-transform:uppercase}
+h2{font:15px var(--head);margin:0 0 10px;text-transform:uppercase;letter-spacing:.03em}
+h3{font:13px var(--head);margin:0 0 6px}
+.lead{color:var(--sub);margin:0 0 16px;max-width:70ch}
+.muted{color:var(--dim);font:11px var(--mono)}
+
+/* ---------- the scene: crew on the left, the site on the right ---------- */
+.scene{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:18px;background:var(--bg2);border:3px solid var(--line);padding:18px;margin:0 0 20px;position:relative;overflow:hidden}
+.scene::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,rgba(255,255,255,.18) 1px,transparent 1.5px);background-size:140px 110px;background-position:30px 20px;opacity:.35}
+.crew{display:grid;gap:12px;align-content:start;position:relative}
+.eyebrow{font:10px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--coral-ink)}
+.crew h2{font:28px var(--head);margin:2px 0 0;text-transform:none;letter-spacing:0}
+.crew .sub{color:var(--sub);font:14px var(--body);margin:0}
+.depts{display:flex;flex-wrap:wrap;gap:6px}
+.depts button{background:transparent;border:2px solid var(--line);color:var(--ink);padding:5px 9px;font:9px var(--disp);text-transform:uppercase;letter-spacing:.1em;cursor:pointer;border-radius:0}
+.depts button.on{background:var(--green);color:#0f2a1a;border-color:var(--green)}
+.stage{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:start}
+.spot{position:relative;height:230px;overflow:hidden}
+.spot .cone{position:absolute;left:50%;top:0;width:150px;height:200px;transform:translateX(-50%);background:linear-gradient(180deg,rgba(255,216,74,.22),rgba(255,216,74,.06) 70%,transparent);clip-path:polygon(44% 0,56% 0,100% 100%,0 100%)}
+.spot .floor{position:absolute;left:8px;right:8px;bottom:14px;height:12px;background:var(--panel2);border:2px solid var(--line)}
+.spot .big{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);width:84px;height:116px}
+.spot .tw{position:absolute;width:4px;height:4px;background:var(--yellow);animation:tw 1.6s steps(2) infinite}
+@keyframes tw{50%{opacity:.15}}
+.card{display:grid;gap:6px;min-width:0}
+.card .name{font:20px var(--mono);color:var(--ink)}
+.card .role{font:15px var(--body);color:var(--sub)}
+.badge{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--blue);padding:4px 8px;font:12px var(--head);text-transform:uppercase;color:var(--ink);background:var(--panel)}
+.badge i{width:8px;height:8px;background:var(--blue)}
+.badge.opus{border-color:var(--coral)}.badge.opus i{background:var(--coral)}
+.card .dept{font:9px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--green-ink);margin-left:8px}
+.card .lab{font:9px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:var(--coral-ink);margin-top:4px}
+.card .ability{font:14px var(--body);color:var(--ink)}
+.card .cmd{font:14px var(--mono);color:var(--green-ink)}
+.card .hp{display:grid;grid-template-columns:repeat(20,1fr);gap:2px}.card .hp i{display:block;height:10px;background:var(--panel2);border:1px solid var(--line)}
+.card .hp i.on{background:var(--green);border-color:var(--green)}.card .hp.warn i.on{background:var(--orange);border-color:var(--orange)}.card .hp.bad i.on{background:var(--red);border-color:var(--red)}
+.card .scoreline{display:flex;gap:10px;align-items:baseline}.card .scoreline b{font:26px var(--head)}
+.card ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}.card li{font:13px var(--body);color:var(--sub);display:flex;gap:6px;align-items:baseline}
+.roster{display:flex;flex-wrap:wrap;gap:6px}
+.roster button{background:var(--panel);border:2px solid var(--line);padding:4px 6px 2px;cursor:pointer;display:grid;justify-items:center;gap:2px;min-width:58px;border-radius:0}
+.roster button.on{border-color:var(--yellow)}.roster button svg{width:22px;height:30px}.roster button span{font:8px var(--disp);text-transform:uppercase;letter-spacing:.06em;color:var(--dim)}
+.site{border:3px solid var(--coral);background:#1a1c2c;color:#fff;padding:10px;display:grid;gap:8px;align-content:start;min-width:0}
+.chrome{display:flex;align-items:center;gap:8px}
+.chrome .lights{display:flex;gap:5px}.chrome .lights i{width:11px;height:11px;display:block}
+.chrome .url{flex:1;border:2px solid #3b4178;background:#13141f;padding:6px 10px;font:13px var(--mono);color:#d6d8ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chrome .hud{font:11px var(--mono);color:#ffd84a;border:2px solid #ffd84a;padding:4px 8px;white-space:nowrap}
+.sitenav{display:flex;justify-content:space-between;align-items:center;background:#2a3060;padding:6px 10px;font:13px var(--head)}
+.sitenav span{color:#d6d8ea;font:12px var(--body);margin-left:14px}
+.sitenav b::before{content:"";display:inline-block;width:10px;height:10px;background:#D97757;margin-right:8px;vertical-align:-1px}
+.zones{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-areas:"hero hero ai" "article article product" "map robots sitemap" "map links analytics";gap:8px}
+.zone{position:relative;background:#232640;border:2px solid #2a3060;min-height:118px;padding:8px 10px 0;display:flex;flex-direction:column;cursor:pointer}
+.zone:hover,.zone.on{border-color:#ffd84a}
+.zone .zl{font:8px var(--disp);letter-spacing:.14em;text-transform:uppercase;color:#aab0d6}
+.zone .mock{margin:6px 0 0;display:grid;gap:4px;justify-items:start}.zone .mock i{display:block;height:5px;background:#3b4178;width:70%}.zone .mock i:nth-child(2){width:50%}.zone .mock i:nth-child(3){width:60%}
+.zone .mock b{font:15px var(--head);color:#fff;margin-bottom:2px}.zone .mock .cta{display:inline-block;background:#D97757;color:#1a1c2c;font:8px var(--disp);text-transform:uppercase;letter-spacing:.1em;padding:4px 8px}
+.zone .bots{margin-top:auto;display:flex;align-items:flex-end;gap:14px;padding:6px 2px 0;min-height:56px}
+.zone.ai{background:#13303a;border-color:#3ad6c8}.zone.ai .mock i{background:#1f6f72}.zone.ai .ans{border:2px solid #3ad6c8;font:11px var(--mono);color:#3ad6c8;padding:3px 6px}
+.zone.map{background:#1f4a33;border-color:#2f7a52;background-image:linear-gradient(#2f7a52 1px,transparent 1px),linear-gradient(90deg,#2f7a52 1px,transparent 1px);background-size:100% 22px,22px 100%}
+.zone.product .tag{position:absolute;right:8px;top:8px;border:2px solid #D97757;color:#f3a985;font:8px var(--disp);padding:3px 6px;letter-spacing:.1em;background:transparent}
+.zone.product .stars{color:#ffd84a;font:12px var(--mono)}
+.zone.small{min-height:96px}.zone.small .zl{font:11px var(--mono);color:#d6d8ea;letter-spacing:0;text-transform:none}
+.bot{display:grid;justify-items:center;gap:3px;background:none;border:0;padding:0;cursor:pointer}
+.bot svg{width:30px;height:40px;animation:bob 1.2s steps(2) infinite}
+.bot:nth-child(2) svg{animation-delay:.4s}.bot:nth-child(3) svg{animation-delay:.8s}
+@keyframes bob{50%{transform:translateY(-2px)}}
+.bot .sc{font:9px var(--mono);padding:1px 4px;border:1px solid currentColor;line-height:1.3}
+.bot.ok .sc{color:#5fd38d}.bot.warn .sc{color:#f79a1e}.bot.bad .sc{color:#ef6b6b}.bot.off .sc{color:#aab0d6}.bot.off svg{opacity:.45;animation:none}
+.bot.on .sc{background:#ffd84a;color:#1a1c2c;border-color:#ffd84a}
+@media (prefers-reduced-motion:reduce){.bot svg,.spot .tw{animation:none}}
+@media (max-width:980px){.scene{grid-template-columns:1fr}.zones{grid-template-columns:1fr 1fr;grid-template-areas:"hero hero" "ai product" "article article" "map robots" "sitemap links" "analytics analytics"}}
+@media (max-width:560px){.stage{grid-template-columns:1fr}.spot{height:170px}}
+
+/* ---------- detail views ---------- */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:0 0 18px}
+.tile{background:var(--panel);border:3px solid var(--line);padding:10px 12px;box-shadow:4px 4px 0 var(--line);display:grid;gap:3px;cursor:pointer;text-align:left}
+.tile:hover{border-color:var(--yellow)}.tile.on{border-color:var(--yellow);box-shadow:4px 4px 0 var(--yellow)}
+.tile .k{font:9px var(--disp);text-transform:uppercase;letter-spacing:.1em;color:var(--dim);display:flex;gap:8px;align-items:center}
+.dot{width:9px;height:9px;display:inline-block;background:var(--dim)}.dot.ok{background:var(--green)}.dot.warn{background:var(--orange)}.dot.bad{background:var(--red)}
+.tile .v{font:22px var(--head)}.tile .v small{font:11px var(--mono);color:var(--dim)}.tile .s{font:11px var(--body);color:var(--sub)}
+.panel{background:var(--panel);border:3px solid var(--line);padding:16px;box-shadow:4px 4px 0 var(--line);margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.score{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.score .n{font:56px/1 var(--head)}.score .n small{font:14px var(--mono);color:var(--dim)}
+.hp{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;width:min(100%,360px)}.hp i{display:block;height:14px;background:var(--panel2);border:2px solid var(--line)}
+.hp i.on{background:var(--green);border-color:var(--green)}.hp.warn i.on{background:var(--orange);border-color:var(--orange)}.hp.bad i.on{background:var(--red);border-color:var(--red)}
+.cats{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.cats li{display:grid;grid-template-columns:170px 1fr 48px;gap:10px;align-items:center;font-size:13px;cursor:pointer}.cats li:hover span:first-child{color:var(--yellow)}
+.bar{height:14px;background:var(--panel2);border:2px solid var(--line);position:relative}.bar i{position:absolute;inset:0;right:auto;background:var(--green);background-image:repeating-linear-gradient(90deg,transparent 0 6px,rgba(0,0,0,.18) 6px 8px)}.bar.warn i{background-color:var(--orange)}.bar.bad i{background-color:var(--red)}
+.num{font:12px var(--mono);text-align:right}
+.tag{display:inline-block;font:9px var(--disp);text-transform:uppercase;letter-spacing:.08em;padding:3px 6px;border:2px solid var(--line);background:var(--panel2);color:var(--ink);vertical-align:middle}
+.tag.critical{background:var(--red);border-color:var(--red);color:#1a1c2c}.tag.high{background:var(--orange);border-color:var(--orange);color:#1a1c2c}.tag.medium{background:var(--yellow);border-color:var(--yellow);color:#1a1c2c}.tag.low{background:var(--green);border-color:var(--green);color:#1a1c2c}.tag.info{background:var(--blue);border-color:var(--blue);color:#1a1c2c}
+.finding{border-top:2px solid var(--line);padding:10px 0}.finding:first-of-type{border-top:0}
+.finding summary{cursor:pointer;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;list-style:none}.finding summary::-webkit-details-marker{display:none}
+.finding summary b{font:13px var(--head)}.finding summary .cat{font:10px var(--disp);color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.finding p{font:14px/1.5 var(--sans);color:var(--sub);margin:8px 0 0;max-width:80ch}.finding p b{color:var(--ink);font-weight:600}
+.wins{margin:0;padding-left:18px;font:14px/1.5 var(--sans);color:var(--sub)}.wins li{margin:4px 0}
+.levels{display:grid;gap:10px}
+.level{border:3px solid var(--line);padding:10px 12px;background:var(--panel2)}
+.level h3{display:flex;justify-content:space-between;gap:10px}.level h3 span{font:10px var(--disp);color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.level ol{margin:6px 0 0;padding-left:20px;font:14px/1.5 var(--sans);color:var(--sub)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.kpi{border:2px solid var(--line);padding:8px 10px;background:var(--panel2)}.kpi .k{font:9px var(--disp);text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}.kpi .v{font:20px var(--head)}.kpi .v small{font:11px var(--mono);color:var(--dim)}
+.kpi.good .v{color:var(--green)}.kpi.warn .v{color:var(--orange)}.kpi.bad .v{color:var(--red)}
+table{width:100%;border-collapse:collapse;font:13px var(--body)}th{font:9px var(--disp);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);text-align:left;padding:6px 8px;border-bottom:2px solid var(--line)}td{padding:6px 8px;border-bottom:1px solid var(--line)}td.n{font-family:var(--mono);text-align:right}
+.spark{display:flex;align-items:flex-end;gap:2px;height:60px;border-bottom:2px solid var(--line);padding-bottom:2px}.spark i{flex:1;background:var(--blue);min-height:2px}
+.empty{border:3px dashed var(--line);padding:16px;color:var(--sub);font:14px/1.5 var(--sans)}.empty code{font:12px var(--mono);background:var(--panel2);padding:2px 6px;border:1px solid var(--line)}
+.files{display:flex;flex-wrap:wrap;gap:8px}.files a{border:2px solid var(--line);padding:6px 10px;text-decoration:none;color:var(--ink);font:11px var(--disp);text-transform:uppercase;letter-spacing:.05em;background:var(--panel2)}
+.shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:10px}.shots img{width:100%;border:3px solid var(--line)}
+.tabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap;align-items:center}.tabs button{background:var(--panel);border:3px solid var(--line);padding:6px 12px;font:11px var(--disp);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;border-radius:0}.tabs button.on{background:var(--yellow);color:#1a1c2c;border-color:#1a1c2c}
+.filter{font:11px var(--mono);color:var(--dim);display:flex;gap:8px;align-items:center}.filter button{background:none;border:2px solid var(--line);color:var(--ink);font:9px var(--disp);text-transform:uppercase;padding:3px 6px;cursor:pointer}
+footer{max-width:1280px;margin:0 auto;padding:0 16px 30px;color:var(--dim);font:11px var(--mono)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="botshape" viewBox="0 0 16 22"><rect x="7" y="0" width="2" height="1" fill="currentColor"/><rect x="2" y="1" width="12" height="11" fill="currentColor"/><rect x="4" y="4" width="3" height="3" fill="#fff"/><rect x="9" y="4" width="3" height="3" fill="#fff"/><rect x="3" y="12" width="10" height="6" fill="currentColor" opacity=".75"/><rect x="3" y="18" width="3" height="3" fill="currentColor" opacity=".75"/><rect x="10" y="18" width="3" height="3" fill="currentColor" opacity=".75"/></symbol>
+</defs></svg>
+<header class="top">
+  <div class="brand"><b>SEO</b> Cockpit</div>
+  <select id="site" aria-label="Site"></select>
+  <button class="btn" id="refresh" type="button">Refresh data</button>
+  <button class="btn ghost" id="theme" type="button" aria-label="Toggle theme">◐</button>
+  <span class="stamp" id="stamp"></span>
+</header>
+<main>
+  <section class="scene" id="scene" aria-label="The team on your site">
+    <div class="crew">
+      <div class="eyebrow">The team</div>
+      <h2>Choose your crew</h2>
+      <p class="sub" id="crewSub"></p>
+      <div class="depts" id="depts"></div>
+      <div class="stage">
+        <div class="spot" id="spot"><div class="cone"></div><i class="tw" style="left:18%;top:30%"></i><i class="tw" style="left:74%;top:44%;animation-delay:.6s"></i><i class="tw" style="left:30%;top:62%;animation-delay:1.1s"></i><div class="floor"></div><svg class="big" id="bigBot"><use href="#botshape"/></svg></div>
+        <div class="card" id="card"></div>
+      </div>
+      <div class="roster" id="roster"></div>
+    </div>
+    <div class="site" id="siteMock"></div>
+  </section>
+
+  <h1 id="title">Loading…</h1>
+  <p class="lead" id="lead"></p>
+  <section class="tiles" id="tiles" aria-label="Overview"></section>
+  <nav class="tabs" id="tabs" aria-label="Views"></nav>
+  <section id="view"></section>
+</main>
+<footer>Local only. Data comes from <code>audits/&lt;site&gt;-audit/</code> (written by <code>/seo audit</code>) and claude-seo's own Google scripts. Edit <code>data/sites.json</code> to add sites or a Google API key. Crew idea and pixel fonts: claude-seo (MIT).</footer>
+<script>
+(() => {
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const band = (n, good = 80, warn = 60) => n == null ? '' : n >= good ? 'ok' : n >= warn ? 'warn' : 'bad';
+  const cls = (n) => n == null ? '' : n >= 80 ? '' : n >= 60 ? 'warn' : 'bad';
+  const when = (iso) => { if (!iso) return ''; const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }); };
+  const fmtMs = (v, unit) => v == null ? 'n/a' : unit === 'ms' ? (v >= 1000 ? (v / 1000).toFixed(1) + ' s' : Math.round(v) + ' ms') : typeof v === 'number' ? v.toFixed(2) : String(v);
+  const compact = (n) => n == null ? 'n/a' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? (n / 1e3).toFixed(1) + 'K' : String(Math.round(n));
+  const shortErr = (e) => /401|unauthori|rate limit|api key|forbidden/i.test(String(e)) ? 'needs a Google API key (see Vitals)' : String(e).replace(/https?:\S+/g, '').replace(/\s+/g, ' ').slice(0, 56);
+  const SEVS = ['critical', 'high', 'medium', 'low', 'info'];
+
+  // The crew: claude-seo's specialists, where each one stands on the site, and which audit categories it owns.
+  const AGENTS = [
+    { id: 'seo-technical', role: 'Technical SEO Lead', model: 'Sonnet', dept: 'technical', ability: 'Crawl, index, redirects, security headers, on-page basics.', cmd: '/seo technical', cats: ['Technical SEO', 'On-Page SEO'], zone: 'robots', color: '#ef6b6b' },
+    { id: 'seo-sitemap', role: 'Sitemap Architect', model: 'Sonnet', dept: 'technical', ability: 'Sitemap structure, lastmod, orphans, robots.txt declaration.', cmd: '/seo sitemap', cats: ['Sitemap'], zone: 'sitemap', color: '#4ea0ff' },
+    { id: 'seo-performance', role: 'Performance Engineer', model: 'Sonnet', dept: 'technical', ability: 'LCP, INP, CLS, page weight, third parties.', cmd: '/seo audit', cats: ['Performance (CWV)'], zone: 'analytics', color: '#f79a1e' },
+    { id: 'seo-visual', role: 'Visual QA', model: 'Sonnet', dept: 'technical', ability: 'Screenshots, the mobile fold, tap targets, layout shifts.', cmd: '/seo audit', cats: ['Visual / Mobile UX'], zone: 'hero', color: '#5fd38d' },
+    { id: 'seo-content', role: 'Content Editor', model: 'Opus', dept: 'content', ability: 'E-E-A-T, thin pages, readability, citable passages.', cmd: '/seo content', cats: ['Content Quality'], zone: 'article', color: '#f2b84b' },
+    { id: 'seo-cluster', role: 'Topic Strategist', model: 'Opus', dept: 'content', ability: 'Hubs and spokes, cannibalization, next pages.', cmd: '/seo cluster', cats: ['Topic Clusters / Internal Linking'], zone: 'article', color: '#ffd27a' },
+    { id: 'seo-images', role: 'Image Optimizer', model: 'Sonnet', dept: 'content', ability: 'Alt text, formats, srcset, image CLS, OG images.', cmd: '/seo images', cats: ['Images'], zone: 'article', color: '#d9561c' },
+    { id: 'seo-sxo', role: 'Search Experience Designer', model: 'Opus', dept: 'content', ability: 'Intent match, personas, CTAs, trust signals.', cmd: '/seo sxo', cats: ['Search Experience (SXO)'], zone: 'hero', color: '#b48cff' },
+    { id: 'seo-schema', role: 'Structured Data Engineer', model: 'Sonnet', dept: 'schema', ability: 'Detect, validate and generate JSON-LD.', cmd: '/seo schema', cats: ['Schema / Structured Data'], zone: 'product', color: '#7ED957' },
+    { id: 'seo-geo', role: 'AI Search Analyst', model: 'Opus', dept: 'schema', ability: 'AI Overviews, citations, entity and brand signals.', cmd: '/seo geo', cats: ['AI Search Readiness'], zone: 'ai', color: '#3ad6c8' },
+    { id: 'seo-agentic', role: 'Agent Readiness Analyst', model: 'Sonnet', dept: 'schema', ability: 'Agentic browsing, llms.txt, discovery files, WebMCP.', cmd: '/seo agentic', cats: ['Agent Readiness'], zone: 'ai', color: '#9b6bff' },
+    { id: 'seo-local', role: 'Local SEO Specialist', model: 'Sonnet', dept: 'local', ability: 'Google Business Profile, NAP, reviews, map pack.', cmd: '/seo local', cats: ['Local SEO'], zone: 'map', color: '#5fd38d', skip: 'not needed for a SaaS without a storefront' },
+    { id: 'seo-maps', role: 'Maps Analyst', model: 'Sonnet', dept: 'local', ability: 'Geo-grid ranks, GBP audits, review intel.', cmd: '/seo maps', cats: ['Maps'], zone: 'map', color: '#4ea0ff', skip: 'needs a local business and a saved geo-grid' },
+    { id: 'seo-ecommerce', role: 'E-commerce Specialist', model: 'Sonnet', dept: 'local', ability: 'Product schema, Shopping, marketplaces.', cmd: '/seo ecommerce', cats: ['E-commerce'], zone: 'product', color: '#f79a1e', skip: 'no product catalog on this site' },
+    { id: 'seo-backlinks', role: 'Link Analyst', model: 'Sonnet', dept: 'ext', ability: 'Referring domains, anchors, competitor gaps.', cmd: '/seo backlinks', cats: ['Backlinks / Authority'], zone: 'links', color: '#c9cbe0' },
+    { id: 'seo-google', role: 'Google Data Analyst', model: 'Sonnet', dept: 'ext', ability: 'Search Console, CrUX field data, GA4.', cmd: '/seo google', cats: ['Google Data'], zone: 'analytics', color: '#ef6b6b', skip: 'connect Google (/seo google setup) to run' },
+    { id: 'seo-drift', role: 'Change Monitor', model: 'Opus', dept: 'ext', ability: 'Baselines and regressions between audits.', cmd: '/seo drift', cats: ['Drift'], zone: 'sitemap', color: '#ffd84a', skip: 'runs once a baseline exists' },
+  ];
+  const DEPTS = [['technical', 'Technical'], ['content', 'Content'], ['schema', 'Schema and AI'], ['local', 'Local and Commerce'], ['ext', 'Extensions']];
+  const ZONES = [
+    { id: 'hero', label: 'Hero', mock: '<b>Your headline here</b><span class="cta">Get started</span>' },
+    { id: 'ai', label: 'AI answer', cls: 'ai', mock: '<i></i><i></i><span class="ans">[1] yoursite.com</span>' },
+    { id: 'article', label: 'Article', mock: '<b>Your blog post title</b><i></i><i></i><i></i>' },
+    { id: 'product', label: 'Product', cls: 'product', mock: '<b>Pricing</b><span class="stars">★★★★★</span>', tag: '{ } JSON-LD' },
+    { id: 'map', label: 'Map', cls: 'map', mock: '' },
+    { id: 'robots', label: 'robots.txt', cls: 'small' },
+    { id: 'sitemap', label: 'sitemap.xml', cls: 'small' },
+    { id: 'links', label: 'links', cls: 'small' },
+    { id: 'analytics', label: 'analytics', cls: 'small' },
+  ];
+
+  let index = null, site = null, data = {}, tab = 'audit', dept = 'technical', agentId = 'seo-technical', filterCat = null;
+
+  const root = document.documentElement;
+  try { const t = localStorage.getItem('cockpit-theme'); if (t) root.dataset.theme = t; } catch {}
+  $('#theme').onclick = () => { const next = (root.dataset.theme || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light')) === 'dark' ? 'light' : 'dark'; root.dataset.theme = next; try { localStorage.setItem('cockpit-theme', next); } catch {} };
+
+  async function getJson(url) { try { const r = await fetch(url + '?t=' + Date.now()); if (!r.ok) return null; return await r.json(); } catch { return null; } }
+
+  async function loadIndex() {
+    index = await getJson('data/index.json');
+    if (!index) { $('#title').textContent = 'No data yet'; $('#lead').textContent = 'Run: python3 cockpit.py build'; return; }
+    const sel = $('#site');
+    sel.innerHTML = index.sites.map((s) => `<option value="${esc(s.domain)}">${esc(s.label || s.domain)}${s.audit && s.audit.score != null ? ` · ${s.audit.score}/100` : s.audit ? '' : ' · no audit'}</option>`).join('');
+    let want = location.hash.slice(1).split('/')[0];
+    try { want = want || localStorage.getItem('cockpit-site') || ''; } catch {}
+    if (!index.sites.some((s) => s.domain === want)) want = (index.sites.find((s) => s.audit && s.audit.score != null) || index.sites[0] || {}).domain;
+    sel.value = want || '';
+    $('#stamp').textContent = `data built ${when(index.generated_at)}${index.claude_seo ? '' : ' · claude-seo not installed'}`;
+    await loadSite(sel.value);
+  }
+
+  async function loadSite(domain) {
+    site = index.sites.find((s) => s.domain === domain); if (!site) return;
+    try { localStorage.setItem('cockpit-site', domain); } catch {}
+    history.replaceState(null, '', '#' + domain);
+    const [audit, vitals, gsc] = await Promise.all([site.audit ? getJson(`data/${domain}/audit.json`) : null, site.vitals ? getJson(`data/${domain}/vitals.json`) : null, site.gsc ? getJson(`data/${domain}/gsc.json`) : null]);
+    data = { audit, vitals, gsc };
+    filterCat = null;
+    render();
+  }
+
+  // ---- audit helpers
+  const auditOk = () => data.audit && !data.audit.error ? data.audit : null;
+  const catsOf = () => (auditOk()?.categories || []).filter((c) => typeof c.score === 'number');
+  const findingsOf = (names) => (auditOk()?.categories || []).filter((c) => !names || names.includes(c.name)).flatMap((c) => (c.findings || []).map((f) => ({ ...f, cat: c.name })));
+  const sevIdx = (s) => { const i = SEVS.indexOf(String(s || '').toLowerCase()); return i < 0 ? 9 : i; };
+  const sortSev = (xs) => xs.sort((x, y) => sevIdx(x.severity) - sevIdx(y.severity));
+  function agentState(a) {
+    const cats = catsOf().filter((c) => a.cats.includes(c.name));
+    if (!cats.length) return { score: null, state: 'off', reason: a.skip || (auditOk() ? 'not part of this audit' : 'no audit yet') };
+    const score = Math.round(cats.reduce((n, c) => n + c.score, 0) / cats.length);
+    return { score, state: band(score), cats, findings: sortSev(findingsOf(a.cats)) };
+  }
+
+  // ---- the scene
+  function renderScene() {
+    const a = auditOk();
+    const ran = AGENTS.filter((x) => agentState(x).score != null).length;
+    $('#crewSub').textContent = a ? `${ran} specialists ran on ${site.domain}. Click a bot, on the site or below, to see what it found.` : `19 specialists available. Run /seo audit ${site.url} to send them in.`;
+    const agent = AGENTS.find((x) => x.id === agentId) || AGENTS[0];
+    dept = agent.dept;
+    $('#depts').innerHTML = DEPTS.map(([id, l]) => `<button type="button" class="${dept === id ? 'on' : ''}" data-dept="${id}">${l}</button>`).join('');
+    $('#depts').querySelectorAll('button').forEach((b) => (b.onclick = () => { const first = AGENTS.find((x) => x.dept === b.dataset.dept); if (first) agentId = first.id; renderScene(); }));
+    const st = agentState(agent);
+    const big = $('#bigBot'); big.style.color = agent.color; big.style.opacity = st.score == null ? '.5' : '1';
+    const blocks = st.score == null ? 0 : Math.round(st.score / 5);
+    $('#card').innerHTML = `
+      <div class="name">${esc(agent.id)}</div>
+      <div class="role">${esc(agent.role)}</div>
+      <div><span class="badge ${agent.model.toLowerCase()}"><i></i>${esc(agent.model)}</span><span class="dept">${esc(DEPTS.find((d) => d[0] === agent.dept)[1])}</span></div>
+      <div class="lab">Ability</div><div class="ability">${esc(agent.ability)}</div>
+      <div class="cmd">${esc(agent.cmd)}</div>
+      ${st.score != null ? `<div class="lab">Score</div><div class="scoreline"><b>${st.score}</b><span class="muted">/100 · ${st.cats.map((c) => esc(c.name)).join(' + ')}</span></div><div class="hp ${cls(st.score)}">${Array.from({ length: 20 }, (_, i) => `<i class="${i < blocks ? 'on' : ''}"></i>`).join('')}</div>
+        <div class="lab">Top findings</div><ul>${st.findings.slice(0, 3).map((f) => `<li><span class="tag ${esc(String(f.severity).toLowerCase())}">${esc(f.severity)}</span><span>${esc(f.title)}</span></li>`).join('') || '<li class="muted">nothing flagged</li>'}</ul>
+        <div><button type="button" class="btn ghost" id="seeAll">See all ${st.findings.length} findings</button></div>` : `<div class="lab">Status</div><div class="ability muted">${esc(st.reason)}</div>`}`;
+    const see = $('#seeAll'); if (see) see.onclick = () => { filterCat = agent.cats; tab = 'audit'; render(); $('#tabs').scrollIntoView({ behavior: 'smooth' }); };
+    $('#roster').innerHTML = AGENTS.filter((x) => x.dept === dept).map((x) => { const s = agentState(x); return `<button type="button" class="${x.id === agentId ? 'on' : ''}" data-agent="${x.id}" title="${esc(x.role)}"><svg style="color:${x.color};opacity:${s.score == null ? .45 : 1}"><use href="#botshape"/></svg><span>${esc(x.id.replace('seo-', ''))}</span></button>`; }).join('');
+    $('#roster').querySelectorAll('button').forEach((b) => (b.onclick = () => { agentId = b.dataset.agent; renderScene(); }));
+
+    const score = a?.summary?.health_score;
+    $('#siteMock').innerHTML = `
+      <div class="chrome"><div class="lights"><i style="background:#ef6b6b"></i><i style="background:#ffd84a"></i><i style="background:#5fd38d"></i></div><div class="url">${esc(site.url)}</div><div class="hud">${score != null ? `SCORE ${score}/100` : 'NO AUDIT YET'}</div></div>
+      <div class="sitenav"><b>${esc(site.domain)}</b><div><span>Home</span><span>Blog</span><span>Pricing</span><span>Contact</span></div></div>
+      <div class="zones">${ZONES.map((z) => {
+        const bots = AGENTS.filter((x) => x.zone === z.id);
+        return `<div class="zone ${z.cls || ''} ${bots.some((x) => x.id === agentId) ? 'on' : ''}" style="grid-area:${z.id}" data-zone="${z.id}">
+          ${z.tag ? `<span class="tag">${esc(z.tag)}</span>` : ''}
+          <span class="zl">${esc(z.label)}</span>
+          ${z.mock !== undefined ? `<div class="mock">${z.mock}</div>` : ''}
+          <div class="bots">${bots.map((x) => { const s = agentState(x); return `<button type="button" class="bot ${s.state} ${x.id === agentId ? 'on' : ''}" data-agent="${x.id}" title="${esc(x.id)}: ${esc(x.role)}${s.score != null ? ` · ${s.score}/100` : ` · ${esc(s.reason)}`}"><span class="sc">${s.score != null ? s.score : '–'}</span><svg style="color:${x.color}"><use href="#botshape"/></svg></button>`; }).join('')}</div>
+        </div>`; }).join('')}</div>`;
+    $('#siteMock').querySelectorAll('.bot').forEach((b) => (b.onclick = (e) => { e.stopPropagation(); agentId = b.dataset.agent; renderScene(); }));
+    $('#siteMock').querySelectorAll('.zone').forEach((zEl) => (zEl.onclick = () => { const first = AGENTS.find((x) => x.zone === zEl.dataset.zone); if (first) { agentId = first.id; renderScene(); } }));
+  }
+
+  // ---- overview tiles + tabs
+  function gscTotals(g) {
+    const rowsOf = (x) => { if (!x) return []; if (Array.isArray(x)) return x.filter((r) => r && typeof r === 'object' && 'clicks' in r); for (const k of ['rows', 'data', 'results']) if (Array.isArray(x[k])) return rowsOf(x[k]); return Object.values(x).flatMap((v) => (v && typeof v === 'object' ? rowsOf(v) : [])); };
+    const days = rowsOf(g.by_day), qs = rowsOf(g.by_query);
+    if (!days.length && !qs.length) return null;
+    const src = days.length ? days : qs;
+    const clicks = src.reduce((n, r) => n + (+r.clicks || 0), 0), impressions = src.reduce((n, r) => n + (+r.impressions || 0), 0);
+    const pos = src.filter((r) => r.position != null); const position = pos.length ? pos.reduce((n, r) => n + +r.position * (+r.impressions || 1), 0) / Math.max(1, pos.reduce((n, r) => n + (+r.impressions || 1), 0)) : null;
+    return { clicks, impressions, position, top3: qs.filter((r) => +r.position <= 3).length, days, qs, pages: rowsOf(g.by_page), keyOf: (r) => Array.isArray(r.keys) ? r.keys[0] : r.date || r.query || r.page || r.key || '' };
+  }
+  function overview() {
+    const a = auditOk(); const score = a ? a.summary?.health_score : null;
+    const cats = catsOf(); const weakest = cats.length ? cats.reduce((m, c) => (c.score < m.score ? c : m)) : null;
+    const findings = findingsOf(); const crit = findings.filter((f) => /critical/i.test(f.severity)).length, high = findings.filter((f) => /high/i.test(f.severity)).length;
+    const m = data.vitals?.psi?.mobile, perf = m?.lighthouse_scores?.performance;
+    const g = data.gsc && !data.gsc.error ? gscTotals(data.gsc) : null;
+    const tiles = [
+      { id: 'audit', k: 'Audit', state: a ? band(score) : '', v: a ? `${score ?? '?'}<small>/100</small>` : '—', s: a ? `${findings.length} findings · ${crit} critical · ${high} high` : data.audit?.error ? 'audit file unreadable' : `no audit yet` },
+      { id: 'audit', k: 'Weakest', state: weakest ? band(weakest.score) : '', v: weakest ? `${weakest.score}<small>/100</small>` : '—', s: weakest ? weakest.name : 'after the first audit' },
+      { id: 'vitals', k: 'Vitals', state: perf != null ? band(perf * (perf <= 1 ? 100 : 1), 90, 50) : data.vitals?.error ? 'bad' : '', v: perf != null ? `${Math.round(perf <= 1 ? perf * 100 : perf)}<small> perf</small>` : '—', s: perf != null ? 'Lighthouse mobile' : data.vitals?.error ? shortErr(data.vitals.error) : 'needs a Google API key' },
+      { id: 'search', k: 'Search', state: g ? 'ok' : '', v: g ? `${compact(g.clicks)}<small> clicks</small>` : '—', s: g ? `${compact(g.impressions)} impressions · 28 days` : 'no Search Console access' },
+      { id: 'reports', k: 'Reports', state: a ? 'ok' : '', v: a ? `${(a._meta?.files || []).length}<small> files</small>` : '—', s: a ? `written ${when(a._meta?.written_at)}` : 'Markdown, PDF, screenshots' },
+      { id: 'plan', k: 'Action plan', state: a ? 'ok' : '', v: a ? `${(a.action_plan?.phases || []).reduce((n, p) => n + (p.items || []).length, 0)}<small> steps</small>` : '—', s: a ? `${(a.action_plan?.phases || []).length} phases` : 'after the first audit' },
+    ];
+    $('#tiles').innerHTML = tiles.map((t) => `<button class="tile${tab === t.id ? ' on' : ''}" data-tab="${t.id}"><span class="k"><i class="dot ${t.state}"></i>${t.k}</span><span class="v">${t.v}</span><span class="s">${esc(t.s)}</span></button>`).join('');
+    $('#tiles').querySelectorAll('.tile').forEach((b) => (b.onclick = () => { tab = b.dataset.tab; filterCat = null; render(); }));
+  }
+
+  function render() {
+    $('#title').textContent = site.label || site.domain;
+    $('#lead').innerHTML = `${esc(site.url)}${data.audit?._meta ? ` · audit ${esc(when(data.audit._meta.written_at))}` : ''}${data.audit?.summary?.business_type ? ` · ${esc(data.audit.summary.business_type)}` : ''}`;
+    renderScene();
+    overview();
+    const views = [['audit', 'Audit'], ['plan', 'Action plan'], ['vitals', 'Vitals'], ['search', 'Search'], ['reports', 'Reports']];
+    $('#tabs').innerHTML = views.map(([id, l]) => `<button type="button" class="${tab === id ? 'on' : ''}" data-tab="${id}">${l}</button>`).join('') + (filterCat ? `<span class="filter">showing ${esc(filterCat.join(' + '))} <button type="button" id="clearFilter">show all</button></span>` : '');
+    $('#tabs').querySelectorAll('button[data-tab]').forEach((b) => (b.onclick = () => { tab = b.dataset.tab; render(); }));
+    const cf = $('#clearFilter'); if (cf) cf.onclick = () => { filterCat = null; render(); };
+    $('#view').innerHTML = ({ audit: viewAudit, plan: viewPlan, vitals: viewVitals, search: viewSearch, reports: viewReports })[tab]();
+    $('#view').querySelectorAll('.cats li').forEach((li) => (li.onclick = () => { filterCat = [li.dataset.cat]; const ag = AGENTS.find((x) => x.cats.includes(li.dataset.cat)); if (ag) agentId = ag.id; render(); }));
+  }
+
+  function noAudit() { return `<div class="empty">No audit for this site yet. Run the audit prompt in <code>docs/AUDIT-PROMPT.md</code> for <code>${esc(site.url)}</code>, then press Refresh data. It takes 10 to 15 minutes and writes <code>${esc(site.domain)}-audit/</code>.</div>`; }
+
+  function viewAudit() {
+    const a = data.audit; if (!a || a.error) return a?.error ? `<div class="empty">${esc(a.error)}</div>` : noAudit();
+    const score = a.summary?.health_score ?? 0, cats = catsOf();
+    const findings = sortSev(findingsOf(filterCat));
+    const blocks = Math.round(score / 5);
+    const wins = (a.summary?.quick_wins || []).map((w) => (typeof w === 'string' ? w : w.title || JSON.stringify(w)));
+    const tops = (a.summary?.top_findings || []).map((w) => (typeof w === 'string' ? w : w.title || JSON.stringify(w)));
+    return `
+<div class="grid2">
+  <div class="panel"><h2>Health score</h2>
+    <div class="score"><div class="n">${score}<small> /100</small></div><div class="hp ${cls(score)}">${Array.from({ length: 20 }, (_, i) => `<i class="${i < blocks ? 'on' : ''}"></i>`).join('')}</div></div>
+    <p class="muted" style="margin:10px 0 0">${esc(a.summary?.business_type || '')}${a._meta?.written_at ? ` · ${esc(when(a._meta.written_at))}` : ''} · weighted: technical 22, content 23, on-page 20, schema 10, performance 10, AI search 10, images 5</p>
+    ${tops.length ? `<h3 style="margin-top:14px">Top findings</h3><ul class="wins">${tops.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+  </div>
+  <div class="panel"><h2>Categories <span class="muted">click one to filter</span></h2><ul class="cats">${cats.map((c) => `<li data-cat="${esc(c.name)}"><span>${esc(c.name)}${c.weight ? '' : ' <span class="muted">(info)</span>'}</span><div class="bar ${cls(c.score)}"><i style="width:${Math.max(2, Math.min(100, c.score))}%"></i></div><span class="num">${c.score}</span></li>`).join('')}</ul>
+    ${wins.length ? `<h3 style="margin-top:14px">Quick wins</h3><ul class="wins">${wins.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>` : ''}
+  </div>
+</div>
+<div class="panel"><h2>Findings <span class="muted">${findings.length}${filterCat ? ` in ${esc(filterCat.join(' + '))}` : ''}, worst first</span></h2>
+  ${findings.map((f, i) => `<details class="finding"${i < 3 ? ' open' : ''}><summary><span class="tag ${esc(String(f.severity || 'info').toLowerCase())}">${esc(f.severity || 'Info')}</span><b>${esc(f.title)}</b><span class="cat">${esc(f.cat)}</span></summary>${f.description ? `<p>${esc(f.description)}</p>` : ''}${f.recommendation ? `<p><b>Fix:</b> ${esc(f.recommendation)}</p>` : ''}</details>`).join('') || '<p class="muted">No findings recorded.</p>'}
+</div>
+${cats.some((c) => (c.what_works || []).length) && !filterCat ? `<div class="panel"><h2>What already works</h2><ul class="wins">${cats.flatMap((c) => (c.what_works || []).slice(0, 4).map((w) => `<li><b>${esc(c.name)}:</b> ${esc(typeof w === 'string' ? w : w.title || '')}</li>`)).join('')}</ul></div>` : ''}`;
+  }
+
+  function viewPlan() {
+    const a = data.audit; if (!a || a.error) return noAudit();
+    const phases = a.action_plan?.phases || [];
+    if (!phases.length) return '<div class="empty">The audit has no action plan section.</div>';
+    return `<div class="panel"><h2>Action plan <span class="muted">levels, in order</span></h2><div class="levels">${phases.map((p, i) => `<div class="level"><h3>Level ${i + 1}: ${esc(p.name)}<span>${esc(p.timeframe || '')}</span></h3>${(p.items || []).length ? `<ol>${p.items.map((it) => `<li>${esc(typeof it === 'string' ? it : it.title || it.task || JSON.stringify(it))}</li>`).join('')}</ol>` : '<p class="muted">nothing in this level</p>'}</div>`).join('')}</div></div>`;
+  }
+
+  function viewVitals() {
+    const v = data.vitals;
+    if (!v || v.error || !v.psi) return `<div class="empty">Core Web Vitals need a Google API key with the <b>PageSpeed Insights API</b> and <b>Chrome UX Report API</b> enabled (free). Put it in <code>data/sites.json</code> as <code>google_api_key</code> or run <code>/seo google setup</code> in Claude Code, then Refresh data.${v?.error ? `<br><span class="muted">last try: ${esc(shortErr(v.error))}</span>` : ''}</div>`;
+    const strat = (s) => {
+      const p = v.psi?.[s]; if (!p || !p.lighthouse_scores) return '';
+      const sc = p.lighthouse_scores, lab = p.lab_metrics || {}, pick = (k) => { const m = lab[k] || lab[k.replace(/-/g, '_')]; return m == null ? null : typeof m === 'object' ? (m.value ?? m.numericValue ?? m.display) : m; };
+      const scores = ['performance', 'accessibility', 'best_practices', 'best-practices', 'seo'].filter((k) => sc[k] != null).map((k) => { const n = Math.round(sc[k] <= 1 ? sc[k] * 100 : sc[k]); return `<div class="kpi ${n >= 90 ? 'good' : n >= 50 ? 'warn' : 'bad'}"><div class="k">${esc(k.replace(/[_-]/g, ' '))}</div><div class="v">${n}</div></div>`; }).join('');
+      const labs = [['largest_contentful_paint', 'LCP', 'ms'], ['interaction_to_next_paint', 'INP', 'ms'], ['total_blocking_time', 'TBT', 'ms'], ['cumulative_layout_shift', 'CLS', ''], ['first_contentful_paint', 'FCP', 'ms'], ['speed_index', 'Speed Index', 'ms']].map(([k, l, u]) => { const val = pick(k); return val == null ? '' : `<div class="kpi"><div class="k">${l} <small>lab</small></div><div class="v">${esc(fmtMs(+val, u))}</div></div>`; }).join('');
+      const opps = (p.opportunities || []).slice(0, 6).map((o) => `<li>${esc(typeof o === 'string' ? o : o.title || o.id)}${o && o.savings_ms ? ` <span class="muted">save ~${Math.round(o.savings_ms)} ms</span>` : ''}</li>`).join('');
+      return `<div class="panel"><h2>${s} <span class="muted">Lighthouse lab</span></h2><div class="kpis">${scores}${labs}</div>${opps ? `<h3>Biggest opportunities</h3><ul class="wins">${opps}</ul>` : ''}</div>`;
+    };
+    const crux = v.crux?.metrics || {};
+    const field = Object.keys(crux).length ? `<div class="panel"><h2>Field data <span class="muted">CrUX, real visitors</span></h2><div class="kpis">${Object.entries(crux).map(([k, m]) => { const p75 = m?.p75 ?? m?.percentiles?.p75; const good = /largest/.test(k) ? 2500 : /interaction/.test(k) ? 200 : /layout/.test(k) ? 0.1 : /first_contentful/.test(k) ? 1800 : null; const poor = good == null ? null : /layout/.test(k) ? 0.25 : good * (/interaction/.test(k) ? 2.5 : 1.6); const c = p75 == null || good == null ? '' : p75 <= good ? 'good' : p75 <= poor ? 'warn' : 'bad'; return `<div class="kpi ${c}"><div class="k">${esc(k.replace(/_/g, ' '))}</div><div class="v">${esc(fmtMs(p75, /layout/.test(k) ? '' : 'ms'))}<small> p75</small></div></div>`; }).join('')}</div></div>` : '';
+    return `<p class="muted" style="margin:0 0 10px">fetched ${esc(when(v._meta?.fetched_at))}</p>${strat('mobile')}${strat('desktop')}${field}`;
+  }
+
+  function viewSearch() {
+    const g = data.gsc;
+    const t = g && !g.error ? gscTotals(g) : null;
+    if (!t) return `<div class="empty">Search Console is not connected for this site. Set <code>"gsc": "sc-domain:${esc(site.domain)}"</code> in <code>data/sites.json</code> and give claude-seo access with <code>/seo google setup</code> (or <code>gcloud auth application-default login</code>), then Refresh data.${g?.error ? `<br><span class="muted">last try: ${esc(shortErr(g.error))}</span>` : ''}</div>`;
+    const max = Math.max(1, ...t.days.map((r) => +r.clicks || 0));
+    const qs = [...t.qs].sort((a, b) => (+b.clicks || 0) - (+a.clicks || 0)).slice(0, 25);
+    const pages = [...t.pages].sort((a, b) => (+b.clicks || 0) - (+a.clicks || 0)).slice(0, 15);
+    const ctr = t.impressions ? ((t.clicks / t.impressions) * 100).toFixed(1) + '%' : 'n/a';
+    return `<div class="panel"><h2>Search Console <span class="muted">28 days · ${esc(g.property || '')}</span></h2>
+<div class="kpis"><div class="kpi"><div class="k">Clicks</div><div class="v">${compact(t.clicks)}</div></div><div class="kpi"><div class="k">Impressions</div><div class="v">${compact(t.impressions)}</div></div><div class="kpi"><div class="k">CTR</div><div class="v">${ctr}</div></div><div class="kpi"><div class="k">Avg position</div><div class="v">${t.position == null ? 'n/a' : t.position.toFixed(1)}</div></div><div class="kpi"><div class="k">Top 3 queries</div><div class="v">${t.top3}</div></div></div>
+${t.days.length ? `<h3>Clicks per day</h3><div class="spark">${t.days.map((r) => `<i style="height:${Math.max(3, ((+r.clicks || 0) / max) * 100)}%" title="${esc(t.keyOf(r))}: ${+r.clicks || 0}"></i>`).join('')}</div>` : ''}</div>
+${qs.length ? `<div class="panel"><h2>Top queries</h2><table><thead><tr><th>Query</th><th>Clicks</th><th>Impr.</th><th>CTR</th><th>Pos.</th></tr></thead><tbody>${qs.map((r) => `<tr><td>${esc(t.keyOf(r))}</td><td class="n">${+r.clicks || 0}</td><td class="n">${+r.impressions || 0}</td><td class="n">${r.ctr != null ? (+r.ctr * (+r.ctr <= 1 ? 100 : 1)).toFixed(1) + '%' : ''}</td><td class="n">${r.position != null ? (+r.position).toFixed(1) : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
+${pages.length ? `<div class="panel"><h2>Top pages</h2><table><thead><tr><th>Page</th><th>Clicks</th><th>Impr.</th><th>Pos.</th></tr></thead><tbody>${pages.map((r) => `<tr><td>${esc(String(t.keyOf(r)).replace(/^https?:\/\/[^/]+/, '') || '/')}</td><td class="n">${+r.clicks || 0}</td><td class="n">${+r.impressions || 0}</td><td class="n">${r.position != null ? (+r.position).toFixed(1) : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}`;
+  }
+
+  function viewReports() {
+    const a = data.audit; if (!a || a.error) return noAudit();
+    const files = a._meta?.files || [];
+    const shots = files.filter((f) => f.startsWith('screenshots/'));
+    return `<div class="panel"><h2>Reports</h2><p class="muted" style="margin:0 0 10px">from ${esc(a._meta?.folder || '')}</p><div class="files">${files.filter((f) => !f.startsWith('screenshots/')).map((f) => `<a href="data/${esc(site.domain)}/reports/${esc(f)}" target="_blank" rel="noopener">${esc(f.replace(/^findings\//, 'findings · ').replace(/\.md$/, ''))}</a>`).join('') || '<span class="muted">no report files copied</span>'}</div>
+${shots.length ? `<div class="shots">${shots.map((f) => `<a href="data/${esc(site.domain)}/reports/${esc(f)}" target="_blank" rel="noopener"><img src="data/${esc(site.domain)}/reports/${esc(f)}" alt="${esc(f)}"></a>`).join('')}</div>` : ''}
+<p class="muted" style="margin:12px 0 0">PDF: in Claude Code run <code>/seo google report</code> inside the audit folder, then Refresh data.</p></div>`;
+  }
+
+  $('#site').onchange = (e) => loadSite(e.target.value);
+  $('#refresh').onclick = async () => { const b = $('#refresh'); b.disabled = true; b.textContent = 'Building…'; try { await fetch('/api/rebuild?refresh=1'); } catch {} await loadIndex(); b.disabled = false; b.textContent = 'Refresh data'; };
+  loadIndex();
+})();
+</script>
+</body>
+</html>
